@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Stephen & Abigail's Wedding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #C5A55A;
+      --gold-light: #E8D9B0;
+      --gold-dark: #A88B3D;
+      --cream: #FFFAF3;
+      --cream-dark: #F5EDE0;
+      --text: #2D2926;
+      --text-light: #6B6560;
+      --sage: #7D8E74;
+      --sage-light: #A8B5A0;
+      --white: #FFFFFF;
+      --error: #C75050;
+      --border: #E8DFD3;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 40px 20px 20px;
+      position: relative;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .ornament {
+      color: var(--gold);
+      font-size: 18px;
+      letter-spacing: 8px;
+      margin-bottom: 12px;
+    }
+
+    .couple-names {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .couple-names .ampersand {
+      font-style: italic;
+      color: var(--gold);
+      margin: 0 4px;
+    }
+
+    .wedding-date {
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+
+    .table-badge {
+      display: inline-block;
+      padding: 6px 24px;
+      border: 1px solid var(--gold-light);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      background: var(--white);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 28px 0;
+      color: var(--gold-light);
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .welcome-text {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-bottom: 28px;
+      font-weight: 300;
+    }
+
+    .guest-greeting {
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .guest-greeting strong {
+      color: var(--gold-dark);
+      font-weight: 600;
+    }
+
+    .change-name {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .change-name button {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      font-size: 12px;
+      text-decoration: underline;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .upload-section { margin-bottom: 32px; }
+
+    .upload-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: var(--white);
+      box-shadow: 0 4px 16px rgba(197, 165, 90, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(197, 165, 90, 0.4);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      background: var(--white);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--gold-light);
+      background: #FFFDF9;
+    }
+
+    .btn-icon { font-size: 20px; }
+    .file-input { display: none; }
+
+    .upload-progress { display: none; margin-top: 20px; }
+    .upload-progress.active { display: block; }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .progress-bar-track {
+      width: 100%;
+      height: 6px;
+      background: var(--cream-dark);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--sage));
+      border-radius: 3px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    .progress-details {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--text-light);
+      text-align: center;
+    }
+
+    .preview-section { display: none; margin-bottom: 24px; }
+    .preview-section.active { display: block; }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .preview-item {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--cream-dark);
+    }
+
+    .preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-item .remove-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .preview-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .preview-actions .btn {
+      flex: 1;
+      padding: 14px 16px;
+    }
+
+    .btn-danger {
+      background: var(--white);
+      color: var(--error);
+      border: 1.5px solid #F0D0D0;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 1000;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast-success { background: var(--sage); color: var(--white); }
+    .toast-error { background: var(--error); color: var(--white); }
+
+    .gallery-section { margin-bottom: 40px; }
+
+    .section-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 18px;
+      font-weight: 400;
+      text-align: center;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .gallery-item {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--cream-dark);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .gallery-item:hover { transform: scale(1.02); }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gallery-empty {
+      text-align: center;
+      padding: 32px 20px;
+      color: var(--text-light);
+      font-size: 14px;
+      font-weight: 300;
+    }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox.active { display: flex; }
+
+    .lightbox img {
+      max-width: 95%;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(45, 41, 38, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 40px 32px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-ornament { color: var(--gold); font-size: 16px; letter-spacing: 6px; margin-bottom: 16px; }
+
+    .modal h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    .modal p {
+      font-size: 14px;
+      color: var(--text-light);
+      font-weight: 300;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .input-group { margin-bottom: 20px; }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--cream);
+      transition: border-color 0.2s ease;
+      outline: none;
+    }
+
+    .input-group input:focus { border-color: var(--gold); }
+    .input-group input::placeholder { color: #B8B0A8; }
+    .modal .btn { width: 100%; }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 11px;
+      color: var(--text-light);
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    .no-table { text-align: center; padding: 60px 20px; }
+
+    .no-table h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+
+    .no-table p { font-size: 14px; color: var(--text-light); font-weight: 300; }
+
+    .fade-in { animation: fadeIn 0.5s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .upload-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 12px;
+      background: var(--gold);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Name Entry Modal -->
+  <div class="modal-overlay" id="nameModal">
+    <div class="modal">
+      <div class="modal-ornament">&#10047; &#10047; &#10047;</div>
+      <h2>Welcome!</h2>
+      <p>Please enter your name so we know<br>who captured these memories.</p>
+      <div class="input-group">
+        <input type="text" id="nameInput" placeholder="Your name" autocomplete="name" autofocus>
+      </div>
+      <button class="btn btn-primary" id="nameSubmit">Continue</button>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">&times;</button>
+    <img id="lightboxImg" src="" alt="">
+  </div>
+
+  <!-- Toast -->
+  <div class="toast toast-success" id="toast"></div>
+
+  <!-- Main Content -->
+  <div class="container" id="mainContent" style="display: none;">
+    <div class="header">
+      <div class="ornament">&#10047; &#10047; &#10047;</div>
+      <h1 class="couple-names">
+        Stephen <span class="ampersand">&amp;</span> Abigail
+      </h1>
+      <p class="wedding-date">September 26, 2026</p>
+      <div class="table-badge" id="tableBadge">Table <span id="tableNum">-</span></div>
+    </div>
+
+    <div class="divider">&#10047;</div>
+
+    <div class="guest-greeting" id="guestGreeting">
+      Welcome, <strong id="guestNameDisplay"></strong>
+    </div>
+    <div class="change-name">
+      <button id="changeNameBtn">not you? tap to change</button>
+    </div>
+
+    <p class="welcome-text">
+      Help us capture every moment!<br>
+      Share your photos from tonight.
+    </p>
+
+    <div class="upload-section">
+      <div class="upload-buttons">
+        <button class="btn btn-primary" id="cameraBtn">
+          <span class="btn-icon">&#128247;</span> Take a Photo
+        </button>
+        <button class="btn btn-secondary" id="galleryBtn">
+          <span class="btn-icon">&#128444;</span> Choose from Gallery
+        </button>
+      </div>
+
+      <input type="file" class="file-input" id="cameraInput" accept="image/*" capture="environment">
+      <input type="file" class="file-input" id="galleryInput" accept="image/*" multiple>
+
+      <div class="preview-section" id="previewSection">
+        <div class="divider">&#10047;</div>
+        <div class="section-title">Ready to Upload</div>
+        <div class="preview-grid" id="previewGrid"></div>
+        <div class="preview-actions">
+          <button class="btn btn-danger" id="clearPreview">Clear</button>
+          <button class="btn btn-primary" id="uploadBtn">
+            Upload <span id="uploadCount">0</span> Photos
+          </button>
+        </div>
+      </div>
+
+      <div class="upload-progress" id="uploadProgress">
+        <div class="progress-header">
+          <span>Uploading...</span>
+          <span id="progressPercent">0%</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-details" id="progressDetails">Preparing photos...</div>
+      </div>
+    </div>
+
+    <div class="gallery-section" id="gallerySection">
+      <div class="divider">&#10047;</div>
+      <div class="section-title">
+        Your Photos <span class="upload-count" id="galleryCount" style="display:none">0</span>
+      </div>
+      <div class="gallery-grid" id="galleryGrid"></div>
+      <div class="gallery-empty" id="galleryEmpty">
+        Your photos will appear here after uploading.
+      </div>
+    </div>
+
+    <div class="footer">WITH LOVE &#10047; STEPHEN &amp; ABIGAIL</div>
+  </div>
+
+  <!-- No Table Parameter Page -->
+  <div class="container" id="noTableContent" style="display: none;">
+    <div class="header">
+      <div class="ornament">&#10047; &#10047; &#10047;</div>
+      <h1 class="couple-names">
+        Stephen <span class="ampersand">&amp;</span> Abigail
+      </h1>
+      <p class="wedding-date">September 26, 2026</p>
+    </div>
+    <div class="no-table">
+      <h2>Scan a Table QR Code</h2>
+      <p>Please scan the QR code on your table to start uploading photos.</p>
+    </div>
+  </div>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <script>
+    // =====================================================
+    // SUPABASE CONFIG - Replace with your project's values
+    // =====================================================
+    const SUPABASE_URL = 'https://fwkrjlkcxvleooequvqd.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3a3JqbGtjeHZsZW9vZXF1dnFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzUzNzgsImV4cCI6MjEwNTIxMTM3OH0.Gry86DSgU9a_bRK76aWJQkD-ux7lqE25AWohFMmlXj4';
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // =====================================================
+    // STATE
+    // =====================================================
+    let guestName = localStorage.getItem('wedding_guest_name') || '';
+    let tableNumber = null;
+    let selectedFiles = [];
+    let previewURLs = [];
+
+    // =====================================================
+    // INITIALIZATION
+    // =====================================================
+    function init() {
+      const params = new URLSearchParams(window.location.search);
+      const table = params.get('table');
+
+      if (!table) {
+        document.getElementById('noTableContent').style.display = 'block';
+        return;
+      }
+
+      tableNumber = parseInt(table, 10) || table;
+      document.getElementById('tableNum').textContent = tableNumber;
+      document.getElementById('mainContent').style.display = 'block';
+
+      if (guestName) {
+        showUploadInterface();
+      } else {
+        showNameModal();
+      }
+    }
+
+    // =====================================================
+    // NAME MODAL
+    // =====================================================
+    function showNameModal() {
+      document.getElementById('nameModal').classList.add('active');
+      setTimeout(() => document.getElementById('nameInput').focus(), 300);
+    }
+
+    function hideNameModal() {
+      document.getElementById('nameModal').classList.remove('active');
+    }
+
+    function submitName() {
+      const input = document.getElementById('nameInput');
+      const name = input.value.trim();
+      if (!name) {
+        input.style.borderColor = 'var(--error)';
+        input.focus();
+        return;
+      }
+      guestName = name;
+      localStorage.setItem('wedding_guest_name', guestName);
+      hideNameModal();
+      showUploadInterface();
+    }
+
+    document.getElementById('nameSubmit').addEventListener('click', submitName);
+    document.getElementById('nameInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') submitName();
+      e.target.style.borderColor = 'var(--border)';
+    });
+
+    document.getElementById('changeNameBtn').addEventListener('click', () => {
+      document.getElementById('nameInput').value = guestName;
+      showNameModal();
+    });
+
+    // =====================================================
+    // UPLOAD INTERFACE
+    // =====================================================
+    function showUploadInterface() {
+      document.getElementById('guestNameDisplay').textContent = guestName;
+      document.getElementById('guestGreeting').classList.add('fade-in');
+      loadMyPhotos();
+    }
+
+    document.getElementById('cameraBtn').addEventListener('click', () => {
+      document.getElementById('cameraInput').click();
+    });
+
+    document.getElementById('galleryBtn').addEventListener('click', () => {
+      document.getElementById('galleryInput').click();
+    });
+
+    document.getElementById('cameraInput').addEventListener('change', handleFileSelect);
+    document.getElementById('galleryInput').addEventListener('change', handleFileSelect);
+
+    function handleFileSelect(e) {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+      files.forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        selectedFiles.push(file);
+        previewURLs.push(URL.createObjectURL(file));
+      });
+      e.target.value = '';
+      renderPreviews();
+    }
+
+    function renderPreviews() {
+      const section = document.getElementById('previewSection');
+      const grid = document.getElementById('previewGrid');
+      const count = document.getElementById('uploadCount');
+
+      if (selectedFiles.length === 0) {
+        section.classList.remove('active');
+        return;
+      }
+
+      section.classList.add('active');
+      count.textContent = selectedFiles.length;
+      grid.innerHTML = '';
+
+      previewURLs.forEach((url, i) => {
+        const div = document.createElement('div');
+        div.className = 'preview-item fade-in';
+        div.innerHTML = `
+          <img src="${url}" alt="Preview">
+          <button class="remove-btn" data-index="${i}">&times;</button>
+        `;
+        grid.appendChild(div);
+      });
+
+      grid.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = parseInt(e.target.dataset.index);
+          URL.revokeObjectURL(previewURLs[idx]);
+          selectedFiles.splice(idx, 1);
+          previewURLs.splice(idx, 1);
+          renderPreviews();
+        });
+      });
+    }
+
+    document.getElementById('clearPreview').addEventListener('click', () => {
+      previewURLs.forEach(url => URL.revokeObjectURL(url));
+      selectedFiles = [];
+      previewURLs = [];
+      renderPreviews();
+    });
+
+    // =====================================================
+    // IMAGE COMPRESSION
+    // =====================================================
+    function compressImage(file, maxDim = 2048, quality = 0.82) {
+      return new Promise((resolve) => {
+        if (file.size < 500000) {
+          resolve(file);
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let { width, height } = img;
+            if (width > maxDim || height > maxDim) {
+              const ratio = Math.min(maxDim / width, maxDim / height);
+              width = Math.round(width * ratio);
+              height = Math.round(height * ratio);
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+            canvas.toBlob((blob) => {
+              resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+            }, 'image/jpeg', quality);
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // =====================================================
+    // UPLOAD
+    // =====================================================
+    document.getElementById('uploadBtn').addEventListener('click', startUpload);
+
+    async function startUpload() {
+      if (!selectedFiles.length) return;
+
+      const uploadBtn = document.getElementById('uploadBtn');
+      const progressDiv = document.getElementById('uploadProgress');
+      const progressBar = document.getElementById('progressBar');
+      const progressPercent = document.getElementById('progressPercent');
+      const progressDetails = document.getElementById('progressDetails');
+
+      uploadBtn.disabled = true;
+      document.getElementById('cameraBtn').disabled = true;
+      document.getElementById('galleryBtn').disabled = true;
+      progressDiv.classList.add('active');
+
+      const total = selectedFiles.length;
+      let completed = 0;
+      let errors = 0;
+
+      for (let i = 0; i < total; i++) {
+        try {
+          progressDetails.textContent = `Uploading photo ${i + 1} of ${total}...`;
+
+          const compressed = await compressImage(selectedFiles[i]);
+          const timestamp = Date.now();
+          const safeName = selectedFiles[i].name.replace(/[^a-zA-Z0-9.]/g, '_');
+          const storagePath = `table-${tableNumber}/${timestamp}_${safeName}`;
+
+          const { error: uploadError } = await sb.storage
+            .from('photos')
+            .upload(storagePath, compressed, {
+              contentType: 'image/jpeg',
+              upsert: false
+            });
+
+          if (uploadError) throw uploadError;
+
+          const { data: urlData } = sb.storage
+            .from('photos')
+            .getPublicUrl(storagePath);
+
+          const { error: dbError } = await sb
+            .from('uploads')
+            .insert({
+              guest_name: guestName,
+              table_number: tableNumber,
+              file_name: selectedFiles[i].name,
+              storage_path: storagePath,
+              photo_url: urlData.publicUrl,
+              file_size: compressed.size
+            });
+
+          if (dbError) throw dbError;
+          completed++;
+        } catch (err) {
+          console.error('Upload error:', err);
+          errors++;
+          completed++;
+        }
+
+        const overall = (completed / total) * 100;
+        progressBar.style.width = overall + '%';
+        progressPercent.textContent = Math.round(overall) + '%';
+      }
+
+      previewURLs.forEach(url => URL.revokeObjectURL(url));
+      selectedFiles = [];
+      previewURLs = [];
+      renderPreviews();
+
+      progressDiv.classList.remove('active');
+      progressBar.style.width = '0%';
+      uploadBtn.disabled = false;
+      document.getElementById('cameraBtn').disabled = false;
+      document.getElementById('galleryBtn').disabled = false;
+
+      if (errors === 0) {
+        showToast(`${total} photo${total > 1 ? 's' : ''} uploaded!`, 'success');
+      } else if (errors < total) {
+        showToast(`${total - errors} uploaded, ${errors} failed`, 'error');
+      } else {
+        showToast('Upload failed. Please try again.', 'error');
+      }
+
+      loadMyPhotos();
+    }
+
+    // =====================================================
+    // MY PHOTOS GALLERY
+    // =====================================================
+    async function loadMyPhotos() {
+      const grid = document.getElementById('galleryGrid');
+      const empty = document.getElementById('galleryEmpty');
+      const countBadge = document.getElementById('galleryCount');
+
+      try {
+        const { data, error } = await sb
+          .from('uploads')
+          .select('*')
+          .eq('guest_name', guestName)
+          .eq('table_number', tableNumber)
+          .order('uploaded_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          grid.innerHTML = '';
+          empty.style.display = 'block';
+          countBadge.style.display = 'none';
+          return;
+        }
+
+        empty.style.display = 'none';
+        countBadge.style.display = 'inline-flex';
+        countBadge.textContent = data.length;
+        grid.innerHTML = '';
+
+        data.forEach(row => {
+          const item = document.createElement('div');
+          item.className = 'gallery-item fade-in';
+          item.innerHTML = `<img src="${row.photo_url}" alt="Photo by ${row.guest_name}" loading="lazy">`;
+          item.addEventListener('click', () => openLightbox(row.photo_url));
+          grid.appendChild(item);
+        });
+      } catch (err) {
+        console.error('Error loading photos:', err);
+      }
+    }
+
+    // =====================================================
+    // LIGHTBOX
+    // =====================================================
+    function openLightbox(url) {
+      document.getElementById('lightboxImg').src = url;
+      document.getElementById('lightbox').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+    document.getElementById('lightbox').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeLightbox();
+    });
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // =====================================================
+    // TOAST
+    // =====================================================
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast toast-${type} show`;
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // =====================================================
+    // START
+    // =====================================================
+    init();
+  </script>
+</body>
+</html>

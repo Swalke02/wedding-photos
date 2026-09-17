@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Wedding Photos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #C5A55A;
+      --gold-light: #E8D9B0;
+      --gold-dark: #A88B3D;
+      --cream: #FFFAF3;
+      --cream-dark: #F5EDE0;
+      --text: #2D2926;
+      --text-light: #6B6560;
+      --sage: #7D8E74;
+      --white: #FFFFFF;
+      --error: #C75050;
+      --border: #E8DFD3;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .auth-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 48px 36px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+
+    .auth-card h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    .auth-card p {
+      font-size: 14px;
+      color: var(--text-light);
+      font-weight: 300;
+      margin-bottom: 24px;
+    }
+
+    .auth-card input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--cream);
+      outline: none;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .auth-card input:focus { border-color: var(--gold); }
+
+    .auth-error {
+      color: var(--error);
+      font-size: 13px;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .top-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .top-bar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .top-bar h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 20px;
+      font-weight: 400;
+    }
+
+    .top-bar-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .stats-row {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--gold-dark);
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-light);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .filters {
+      max-width: 1200px;
+      margin: 16px auto;
+      padding: 0 24px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-light);
+    }
+
+    select.filter-select {
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--white);
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--text);
+      outline: none;
+    }
+
+    .gallery-container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 24px 40px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .photo-card {
+      background: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .photo-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .photo-card-img {
+      aspect-ratio: 1;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .photo-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .photo-card:hover .photo-card-img img { transform: scale(1.03); }
+
+    .photo-card-info { padding: 10px 14px; }
+
+    .photo-card-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .photo-card-meta {
+      font-size: 11px;
+      color: var(--text-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .photo-card-table {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: var(--cream-dark);
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--gold-dark);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      text-decoration: none;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: var(--white);
+    }
+
+    .btn-gold:hover { opacity: 0.9; }
+
+    .btn-outline {
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover { border-color: var(--gold-light); }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox.active { display: flex; }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+
+    .lightbox-info {
+      color: rgba(255,255,255,0.8);
+      margin-top: 12px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-download {
+      position: absolute;
+      top: 16px;
+      right: 68px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-light);
+    }
+
+    .empty-state h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 22px;
+      font-weight: 400;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: var(--text-light);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      border: 3px solid var(--gold-light);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 600px) {
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .top-bar-inner { flex-direction: column; align-items: flex-start; }
+    }
+
+    .photo-card-img .select-check {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.8);
+      background: rgba(0,0,0,0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+      z-index: 2;
+      transition: all 0.15s;
+    }
+
+    .photo-card-img .select-check.checked {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-screen" id="authScreen">
+    <div class="auth-card">
+      <h1>Photo Gallery Admin</h1>
+      <p>Enter the admin password to view and download all photos.</p>
+      <input type="password" id="adminPassword" placeholder="Password">
+      <div class="auth-error" id="authError">Incorrect password. Try again.</div>
+      <button class="btn btn-gold" style="width:100%;padding:14px;font-size:15px;" id="authSubmit">Sign In</button>
+    </div>
+  </div>
+
+  <div id="adminContent" style="display: none;">
+    <div class="top-bar">
+      <div class="top-bar-inner">
+        <h1>Stephen & Abigail &mdash; Photo Gallery</h1>
+        <div class="top-bar-actions">
+          <button class="btn btn-outline" id="refreshBtn">Refresh</button>
+          <button class="btn btn-gold" id="downloadSelectedBtn" style="display:none;">Download Selected</button>
+          <button class="btn btn-gold" id="downloadAllBtn">Download All</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="statTotal">-</div>
+        <div class="stat-label">Total Photos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statGuests">-</div>
+        <div class="stat-label">Guests</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statTables">-</div>
+        <div class="stat-label">Tables</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statSize">-</div>
+        <div class="stat-label">Total Size</div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <span class="filter-label">Filter:</span>
+      <select class="filter-select" id="tableFilter">
+        <option value="all">All Tables</option>
+      </select>
+      <select class="filter-select" id="guestFilter">
+        <option value="all">All Guests</option>
+      </select>
+    </div>
+
+    <div class="gallery-container">
+      <div class="loading" id="galleryLoading">
+        <div class="spinner"></div>
+        <p style="margin-top: 12px;">Loading photos...</p>
+      </div>
+      <div class="gallery-grid" id="galleryGrid"></div>
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <h2>No photos yet</h2>
+        <p>Photos will appear here as guests upload them.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">&times;</button>
+    <button class="lightbox-download" id="lightboxDownload">Download</button>
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-info" id="lightboxInfo"></div>
+  </div>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <script>
+    // =====================================================
+    // SUPABASE CONFIG - Must match index.html
+    // =====================================================
+    const SUPABASE_URL = 'https://fwkrjlkcxvleooequvqd.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3a3JqbGtjeHZsZW9vZXF1dnFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzUzNzgsImV4cCI6MjEwNTIxMTM3OH0.Gry86DSgU9a_bRK76aWJQkD-ux7lqE25AWohFMmlXj4';
+
+    const ADMIN_PASSWORD = 'stephen-abigail-2026';
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let allPhotos = [];
+    let filteredPhotos = [];
+    let selectedIds = new Set();
+
+    // =====================================================
+    // AUTH
+    // =====================================================
+    if (sessionStorage.getItem('wedding_admin_auth') === 'true') {
+      showAdmin();
+    }
+
+    document.getElementById('authSubmit').addEventListener('click', tryAuth);
+    document.getElementById('adminPassword').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') tryAuth();
+    });
+
+    function tryAuth() {
+      if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
+        sessionStorage.setItem('wedding_admin_auth', 'true');
+        showAdmin();
+      } else {
+        document.getElementById('authError').style.display = 'block';
+      }
+    }
+
+    function showAdmin() {
+      document.getElementById('authScreen').style.display = 'none';
+      document.getElementById('adminContent').style.display = 'block';
+      loadAllPhotos();
+    }
+
+    // =====================================================
+    // LOAD PHOTOS
+    // =====================================================
+    async function loadAllPhotos() {
+      const loading = document.getElementById('galleryLoading');
+      const grid = document.getElementById('galleryGrid');
+      const empty = document.getElementById('emptyState');
+
+      loading.style.display = 'block';
+      grid.innerHTML = '';
+      empty.style.display = 'none';
+
+      try {
+        const { data, error } = await sb
+          .from('uploads')
+          .select('*')
+          .order('uploaded_at', { ascending: false });
+
+        if (error) throw error;
+
+        allPhotos = data || [];
+        loading.style.display = 'none';
+
+        if (allPhotos.length === 0) {
+          empty.style.display = 'block';
+          return;
+        }
+
+        updateStats();
+        updateFilters();
+        applyFilters();
+      } catch (err) {
+        console.error('Error loading photos:', err);
+        loading.innerHTML = '<p style="color: var(--error);">Error loading photos. Check Supabase config.</p>';
+      }
+    }
+
+    // =====================================================
+    // STATS
+    // =====================================================
+    function updateStats() {
+      const guests = new Set(allPhotos.map(p => p.guest_name));
+      const tables = new Set(allPhotos.map(p => p.table_number));
+      const totalSize = allPhotos.reduce((sum, p) => sum + (p.file_size || 0), 0);
+
+      document.getElementById('statTotal').textContent = allPhotos.length;
+      document.getElementById('statGuests').textContent = guests.size;
+      document.getElementById('statTables').textContent = tables.size;
+      document.getElementById('statSize').textContent = formatSize(totalSize);
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+      return (bytes / 1073741824).toFixed(1) + ' GB';
+    }
+
+    // =====================================================
+    // FILTERS
+    // =====================================================
+    function updateFilters() {
+      const tables = [...new Set(allPhotos.map(p => p.table_number))].sort((a, b) => a - b);
+      const guests = [...new Set(allPhotos.map(p => p.guest_name))].sort();
+
+      const tableSelect = document.getElementById('tableFilter');
+      tableSelect.innerHTML = '<option value="all">All Tables</option>';
+      tables.forEach(t => {
+        const count = allPhotos.filter(p => p.table_number === t).length;
+        tableSelect.innerHTML += `<option value="${t}">Table ${t} (${count})</option>`;
+      });
+
+      const guestSelect = document.getElementById('guestFilter');
+      guestSelect.innerHTML = '<option value="all">All Guests</option>';
+      guests.forEach(g => {
+        const count = allPhotos.filter(p => p.guest_name === g).length;
+        guestSelect.innerHTML += `<option value="${g}">${g} (${count})</option>`;
+      });
+    }
+
+    document.getElementById('tableFilter').addEventListener('change', applyFilters);
+    document.getElementById('guestFilter').addEventListener('change', applyFilters);
+
+    function applyFilters() {
+      const tableVal = document.getElementById('tableFilter').value;
+      const guestVal = document.getElementById('guestFilter').value;
+
+      filteredPhotos = allPhotos.filter(p => {
+        if (tableVal !== 'all' && String(p.table_number) !== tableVal) return false;
+        if (guestVal !== 'all' && p.guest_name !== guestVal) return false;
+        return true;
+      });
+
+      renderGallery();
+    }
+
+    // =====================================================
+    // RENDER GALLERY
+    // =====================================================
+    function renderGallery() {
+      const grid = document.getElementById('galleryGrid');
+      const empty = document.getElementById('emptyState');
+
+      if (filteredPhotos.length === 0) {
+        grid.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      grid.innerHTML = '';
+
+      filteredPhotos.forEach(photo => {
+        const card = document.createElement('div');
+        card.className = 'photo-card';
+
+        const time = photo.uploaded_at
+          ? new Date(photo.uploaded_at).toLocaleDateString()
+          : 'Unknown';
+
+        card.innerHTML = `
+          <div class="photo-card-img">
+            <div class="select-check ${selectedIds.has(photo.id) ? 'checked' : ''}" data-id="${photo.id}">
+              ${selectedIds.has(photo.id) ? '&#10003;' : ''}
+            </div>
+            <img src="${photo.photo_url}" alt="" loading="lazy">
+          </div>
+          <div class="photo-card-info">
+            <div class="photo-card-name">${escapeHtml(photo.guest_name)}</div>
+            <div class="photo-card-meta">
+              <span class="photo-card-table">Table ${photo.table_number}</span>
+              <span>${time}</span>
+            </div>
+          </div>
+        `;
+
+        card.querySelector('.photo-card-img img').addEventListener('click', () => openLightbox(photo));
+        card.querySelector('.select-check').addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleSelect(photo.id, e.currentTarget);
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // =====================================================
+    // SELECTION
+    // =====================================================
+    function toggleSelect(id, el) {
+      if (selectedIds.has(id)) {
+        selectedIds.delete(id);
+        el.classList.remove('checked');
+        el.innerHTML = '';
+      } else {
+        selectedIds.add(id);
+        el.classList.add('checked');
+        el.innerHTML = '&#10003;';
+      }
+      const btn = document.getElementById('downloadSelectedBtn');
+      btn.style.display = selectedIds.size > 0 ? 'inline-flex' : 'none';
+      btn.textContent = `Download ${selectedIds.size} Selected`;
+    }
+
+    // =====================================================
+    // LIGHTBOX
+    // =====================================================
+    let currentLightboxPhoto = null;
+
+    function openLightbox(photo) {
+      currentLightboxPhoto = photo;
+      document.getElementById('lightboxImg').src = photo.photo_url;
+      document.getElementById('lightboxInfo').textContent =
+        `${photo.guest_name} — Table ${photo.table_number}`;
+      document.getElementById('lightbox').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+    document.getElementById('lightbox').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeLightbox();
+    });
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('lightboxDownload').addEventListener('click', async () => {
+      if (currentLightboxPhoto) await downloadPhoto(currentLightboxPhoto);
+    });
+
+    // =====================================================
+    // DOWNLOAD
+    // =====================================================
+    async function downloadPhoto(photo) {
+      try {
+        const response = await fetch(photo.photo_url);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `table${photo.table_number}_${photo.guest_name}_${photo.file_name || 'photo.jpg'}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        console.error('Download error:', err);
+        window.open(photo.photo_url, '_blank');
+      }
+    }
+
+    document.getElementById('downloadAllBtn').addEventListener('click', async () => {
+      if (!filteredPhotos.length) return;
+      if (!confirm(`Download ${filteredPhotos.length} photos? They will download one at a time.`)) return;
+      for (const photo of filteredPhotos) {
+        await downloadPhoto(photo);
+        await new Promise(r => setTimeout(r, 500));
+      }
+    });
+
+    document.getElementById('downloadSelectedBtn').addEventListener('click', async () => {
+      const photos = filteredPhotos.filter(p => selectedIds.has(p.id));
+      if (!photos.length) return;
+      for (const photo of photos) {
+        await downloadPhoto(photo);
+        await new Promise(r => setTimeout(r, 500));
+      }
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      selectedIds.clear();
+      document.getElementById('downloadSelectedBtn').style.display = 'none';
+      loadAllPhotos();
+    });
+  </script>
+</body>
+</html>
