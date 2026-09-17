@@ -9,17 +9,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
+      --sage: #7D8E74;
+      --sage-light: #C8D5C0;
+      --sage-dark: #5E7055;
+      --sage-pale: #EDF0EA;
+      --pink: #D4A0A0;
+      --pink-light: #EEDAD9;
       --gold: #C5A55A;
       --gold-light: #E8D9B0;
-      --gold-dark: #A88B3D;
-      --cream: #FFFAF3;
-      --cream-dark: #F5EDE0;
-      --text: #2D2926;
-      --text-light: #6B6560;
-      --sage: #7D8E74;
+      --cream: #F9FAF7;
+      --cream-dark: #EEF1EB;
+      --text: #2D3329;
+      --text-light: #6B7065;
       --white: #FFFFFF;
       --error: #C75050;
-      --border: #E8DFD3;
+      --border: #D4DDD0;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -77,7 +81,7 @@
       transition: border-color 0.2s;
     }
 
-    .auth-card input:focus { border-color: var(--gold); }
+    .auth-card input:focus { border-color: var(--sage); }
 
     .auth-error {
       color: var(--error);
@@ -137,7 +141,7 @@
     .stat-value {
       font-size: 28px;
       font-weight: 600;
-      color: var(--gold-dark);
+      color: var(--sage-dark);
       font-family: 'Playfair Display', Georgia, serif;
     }
 
@@ -243,7 +247,7 @@
       background: var(--cream-dark);
       font-size: 10px;
       font-weight: 500;
-      color: var(--gold-dark);
+      color: var(--sage-dark);
     }
 
     .btn {
@@ -262,7 +266,7 @@
     }
 
     .btn-gold {
-      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      background: linear-gradient(135deg, var(--sage), var(--sage-dark));
       color: var(--white);
     }
 
@@ -274,7 +278,7 @@
       color: var(--text);
     }
 
-    .btn-outline:hover { border-color: var(--gold-light); }
+    .btn-outline:hover { border-color: var(--sage-light); }
 
     .lightbox {
       display: none;
@@ -358,8 +362,8 @@
       display: inline-block;
       width: 28px;
       height: 28px;
-      border: 3px solid var(--gold-light);
-      border-top-color: var(--gold);
+      border: 3px solid var(--sage-light);
+      border-top-color: var(--sage);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
@@ -392,8 +396,8 @@
     }
 
     .photo-card-img .select-check.checked {
-      background: var(--gold);
-      border-color: var(--gold);
+      background: var(--sage);
+      border-color: var(--sage);
     }
   </style>
 </head>

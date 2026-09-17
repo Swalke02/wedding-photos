@@ -9,18 +9,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
+      --sage: #7D8E74;
+      --sage-light: #C8D5C0;
+      --sage-dark: #5E7055;
+      --sage-pale: #EDF0EA;
+      --pink: #D4A0A0;
+      --pink-light: #EEDAD9;
       --gold: #C5A55A;
       --gold-light: #E8D9B0;
-      --gold-dark: #A88B3D;
-      --cream: #FFFAF3;
-      --cream-dark: #F5EDE0;
-      --text: #2D2926;
-      --text-light: #6B6560;
-      --sage: #7D8E74;
-      --sage-light: #A8B5A0;
+      --cream: #F9FAF7;
+      --cream-dark: #EEF1EB;
+      --text: #2D3329;
+      --text-light: #6B7065;
       --white: #FFFFFF;
       --error: #C75050;
-      --border: #E8DFD3;
+      --border: #D4DDD0;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -51,11 +54,11 @@
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 4px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      background: linear-gradient(90deg, transparent, var(--sage-light), transparent);
     }
 
     .ornament {
-      color: var(--gold);
+      color: var(--pink);
       font-size: 18px;
       letter-spacing: 8px;
       margin-bottom: 12px;
@@ -72,7 +75,7 @@
 
     .couple-names .ampersand {
       font-style: italic;
-      color: var(--gold);
+      color: var(--pink);
       margin: 0 4px;
     }
 
@@ -88,13 +91,13 @@
     .table-badge {
       display: inline-block;
       padding: 6px 24px;
-      border: 1px solid var(--gold-light);
+      border: 1px solid var(--sage-light);
       border-radius: 20px;
       font-size: 12px;
       font-weight: 500;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: var(--gold-dark);
+      color: var(--sage-dark);
       background: var(--white);
     }
 
@@ -103,7 +106,7 @@
       align-items: center;
       gap: 16px;
       margin: 28px 0;
-      color: var(--gold-light);
+      color: var(--pink-light);
     }
 
     .divider::before, .divider::after {
@@ -130,7 +133,7 @@
     }
 
     .guest-greeting strong {
-      color: var(--gold-dark);
+      color: var(--sage-dark);
       font-weight: 600;
     }
 
@@ -175,14 +178,14 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      background: linear-gradient(135deg, var(--sage), var(--sage-dark));
       color: var(--white);
-      box-shadow: 0 4px 16px rgba(197, 165, 90, 0.3);
+      box-shadow: 0 4px 16px rgba(125, 142, 116, 0.3);
     }
 
     .btn-primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(197, 165, 90, 0.4);
+      box-shadow: 0 6px 20px rgba(125, 142, 116, 0.4);
     }
 
     .btn-primary:active { transform: translateY(0); }
@@ -194,8 +197,8 @@
     }
 
     .btn-secondary:hover {
-      border-color: var(--gold-light);
-      background: #FFFDF9;
+      border-color: var(--sage-light);
+      background: #F7FAF6;
     }
 
     .btn-icon { font-size: 20px; }
@@ -223,7 +226,7 @@
 
     .progress-bar-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--gold), var(--sage));
+      background: linear-gradient(90deg, var(--sage), var(--pink));
       border-radius: 3px;
       transition: width 0.3s ease;
       width: 0%;
@@ -422,7 +425,7 @@
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    .modal-ornament { color: var(--gold); font-size: 16px; letter-spacing: 6px; margin-bottom: 16px; }
+    .modal-ornament { color: var(--pink); font-size: 16px; letter-spacing: 6px; margin-bottom: 16px; }
 
     .modal h2 {
       font-family: 'Playfair Display', Georgia, serif;
@@ -454,7 +457,7 @@
       outline: none;
     }
 
-    .input-group input:focus { border-color: var(--gold); }
+    .input-group input:focus { border-color: var(--sage); }
     .input-group input::placeholder { color: #B8B0A8; }
     .modal .btn { width: 100%; }
 
@@ -492,7 +495,7 @@
       height: 24px;
       padding: 0 8px;
       border-radius: 12px;
-      background: var(--gold);
+      background: var(--sage);
       color: var(--white);
       font-size: 12px;
       font-weight: 600;
