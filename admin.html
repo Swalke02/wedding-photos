@@ -406,9 +406,10 @@
   <div class="auth-screen" id="authScreen">
     <div class="auth-card">
       <h1>Photo Gallery Admin</h1>
-      <p>Enter the admin password to view and download all photos.</p>
-      <input type="password" id="adminPassword" placeholder="Password">
-      <div class="auth-error" id="authError">Incorrect password. Try again.</div>
+      <p>Sign in with your admin account to view and download all photos.</p>
+      <input type="email" id="adminEmail" placeholder="Email" autocomplete="username">
+      <input type="password" id="adminPassword" placeholder="Password" autocomplete="current-password">
+      <div class="auth-error" id="authError">Incorrect email or password. Try again.</div>
       <button class="btn btn-gold" style="width:100%;padding:14px;font-size:15px;" id="authSubmit">Sign In</button>
     </div>
   </div>
@@ -419,6 +420,7 @@
         <h1>Stephen & Abigail &mdash; Photo Gallery</h1>
         <div class="top-bar-actions">
           <button class="btn btn-outline" id="refreshBtn">Refresh</button>
+          <button class="btn btn-outline" id="signOutBtn">Sign Out</button>
           <button class="btn btn-gold" id="downloadSelectedBtn" style="display:none;">Download Selected</button>
           <button class="btn btn-gold" id="downloadAllBtn">Download All</button>
         </div>
@@ -484,8 +486,6 @@
     const SUPABASE_URL = 'https://fwkrjlkcxvleooequvqd.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3a3JqbGtjeHZsZW9vZXF1dnFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzUzNzgsImV4cCI6MjEwNTIxMTM3OH0.Gry86DSgU9a_bRK76aWJQkD-ux7lqE25AWohFMmlXj4';
 
-    const ADMIN_PASSWORD = 'stephen-abigail-2026';
-
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let allPhotos = [];
@@ -495,23 +495,56 @@
     // =====================================================
     // AUTH
     // =====================================================
-    if (sessionStorage.getItem('wedding_admin_auth') === 'true') {
+    // The admin credential lives in Supabase Auth, not in this file. Create the
+    // account once under Authentication -> Users in the Supabase dashboard.
+    // supabase/rls-policies.sql grants that account the rights this page needs.
+    const authError = document.getElementById('authError');
+    const authSubmit = document.getElementById('authSubmit');
+
+    sb.auth.getSession().then(({ data }) => {
+      if (data && data.session) showAdmin();
+    });
+
+    authSubmit.addEventListener('click', tryAuth);
+    ['adminEmail', 'adminPassword'].forEach((id) => {
+      document.getElementById(id).addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') tryAuth();
+      });
+    });
+
+    async function tryAuth() {
+      const email = document.getElementById('adminEmail').value.trim();
+      const password = document.getElementById('adminPassword').value;
+
+      if (!email || !password) {
+        authError.textContent = 'Enter your email and password.';
+        authError.style.display = 'block';
+        return;
+      }
+
+      authSubmit.disabled = true;
+      authSubmit.textContent = 'Signing in...';
+      authError.style.display = 'none';
+
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+
+      authSubmit.disabled = false;
+      authSubmit.textContent = 'Sign In';
+
+      if (error) {
+        authError.textContent = 'Incorrect email or password. Try again.';
+        authError.style.display = 'block';
+        return;
+      }
+
+      document.getElementById('adminPassword').value = '';
       showAdmin();
     }
 
-    document.getElementById('authSubmit').addEventListener('click', tryAuth);
-    document.getElementById('adminPassword').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') tryAuth();
+    document.getElementById('signOutBtn').addEventListener('click', async () => {
+      await sb.auth.signOut();
+      window.location.reload();
     });
-
-    function tryAuth() {
-      if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
-        sessionStorage.setItem('wedding_admin_auth', 'true');
-        showAdmin();
-      } else {
-        document.getElementById('authError').style.display = 'block';
-      }
-    }
 
     function showAdmin() {
       document.getElementById('authScreen').style.display = 'none';

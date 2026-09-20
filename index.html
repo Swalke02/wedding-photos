@@ -775,34 +775,95 @@
     // =====================================================
     // IMAGE COMPRESSION
     // =====================================================
-    function compressImage(file, maxDim = 2048, quality = 0.82) {
-      return new Promise((resolve) => {
-        if (file.size < 500000) {
-          resolve(file);
-          return;
+    // The bucket holds 1 GB. Targeting ~350 KB per photo leaves room for about
+    // 3,000 uploads, well past what a reception realistically produces. Rather
+    // than flatly lowering quality for everyone, we step down only until a
+    // photo fits the budget: clean shots keep a higher quality than the old
+    // fixed 0.82, and only dense, detailed ones give up a little more.
+    const TARGET_BYTES = 350 * 1024;
+    const MAX_DIM = 2048;
+    const MIN_DIM = 800;
+    const QUALITY_STEPS = [0.85, 0.78, 0.70];
+    const FALLBACK_QUALITY = 0.68;
+
+    // createImageBitmap decodes without holding a base64 copy in memory, which
+    // is what used to make long batches fall over on phones. 'from-image' bakes
+    // in EXIF rotation so portrait shots stop uploading sideways.
+    async function decodeImage(file) {
+      if (typeof createImageBitmap === 'function') {
+        try {
+          return await createImageBitmap(file, { imageOrientation: 'from-image' });
+        } catch (err) {
+          // Older mobile browsers reject the options bag; fall through.
         }
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            let { width, height } = img;
-            if (width > maxDim || height > maxDim) {
-              const ratio = Math.min(maxDim / width, maxDim / height);
-              width = Math.round(width * ratio);
-              height = Math.round(height * ratio);
-            }
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-            canvas.toBlob((blob) => {
-              resolve(new File([blob], file.name, { type: 'image/jpeg' }));
-            }, 'image/jpeg', quality);
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
+      }
+      return await new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('decode failed')); };
+        img.src = url;
       });
+    }
+
+    function encodeAt(source, dim, quality) {
+      let { width, height } = source;
+      if (width > dim || height > dim) {
+        const ratio = Math.min(dim / width, dim / height);
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(source, 0, 0, width, height);
+      return new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
+    }
+
+    async function compressImage(file) {
+      let source;
+      try {
+        source = await decodeImage(file);
+      } catch (err) {
+        // Undecodable (odd format, corrupt file) -- upload it untouched rather
+        // than lose the photo entirely.
+        console.error('Compression skipped, uploading original:', err);
+        return file;
+      }
+
+      try {
+        const longest = Math.max(source.width, source.height);
+
+        // Already modest and correctly sized: re-encoding would only lose detail.
+        if (longest <= MAX_DIM && file.size <= TARGET_BYTES) return file;
+
+        let smallest = null;
+        let dim = Math.min(MAX_DIM, longest);
+        let qualities = QUALITY_STEPS;
+        let done = false;
+
+        while (!done) {
+          for (const quality of qualities) {
+            const blob = await encodeAt(source, dim, quality);
+            if (!blob) continue;
+            if (!smallest || blob.size < smallest.size) smallest = blob;
+            if (blob.size <= TARGET_BYTES) { done = true; break; }
+          }
+          if (done || dim <= MIN_DIM) break;
+          // Still too heavy. Give up dimension rather than more quality: a
+          // small but very detailed photo can't reach the budget on quality
+          // alone, and 0.6-ish JPEG gets visibly mushy before it gets small.
+          dim = Math.max(MIN_DIM, Math.round(dim * 0.8));
+          qualities = [FALLBACK_QUALITY];
+        }
+
+        if (!smallest || smallest.size >= file.size) return file;
+        return new File([smallest], file.name, { type: 'image/jpeg' });
+      } finally {
+        if (source && typeof source.close === 'function') source.close();
+      }
     }
 
     // =====================================================
